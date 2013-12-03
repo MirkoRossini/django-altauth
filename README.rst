@@ -70,6 +70,7 @@ Quick start
 3. Run `python manage.py syncdb` to create the altauth models.
 
 4. Add the authentication methods you need to AUTHENTICATION_BACKEND in settings.py::
+
      AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
                                 'altauth.auth_backends.AlternativePasswordBackend',
                                 'altauth.auth_backends.PublicKeyBackend') 

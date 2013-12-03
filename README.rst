@@ -3,15 +3,22 @@ django-altauth
 ==============
 
 Set of utilities to allow for alternative authentication methods 
-specifically thought for access through static scripts
+specifically thought for access through static scripts.
+
+django-altauth, as of now, provides support for:
+
+1. RSA public key authentication (works with standard .pem formats or the ssh public RSA key format).
+2. Authentication using an alternative password set by the user.
+
 
 Why this app?
 =============
 
-This app was created to address a user case that recently came up at work:
-I'm managing a web service that works as a wrapper around some data. Users
-can log in through ldap, and usually use this data as input for a script,
-and don't want to store their passwords in the scripts for obvious reasons.
+This app was created to address the following user case:
+I'm managing a web service that works as a wrapper around a data provider. Users
+can log in with ldap. 
+Usually use this data as input for a script,and don't want to store their passwords 
+in the scripts for obvious reasons.
 
 
 Supported methods

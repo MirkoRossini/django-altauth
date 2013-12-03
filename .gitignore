@@ -1,0 +1,13 @@
+*.pyc
+*/*.pyc
+*/*/*.pyc
+*.swp
+*/*.swp
+*/*/*.swp
+*.swo
+*/*.swo
+*/*/*.swo
+build/
+dist/
+django_altauth.egg-info/
+

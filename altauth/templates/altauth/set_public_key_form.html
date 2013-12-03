@@ -1,0 +1,10 @@
+
+{% load i18n %}
+
+<div id = "altauth_set_public_key_form" >
+  <form action="{% url 'altauth_set_public_key' %}" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="{% trans "Set public key" %}" />
+  </form>
+</div>
+

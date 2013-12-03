@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+
+{% block content %}
+
+{% include "altauth/set_public_key_form.html" %}
+{% if success %}
+  <div>
+    {% blocktrans %}Public key successfully set{% endblocktrans %}
+  </div>
+{% endif %}
+
+{% endblock %}

@@ -95,7 +95,7 @@ class PublicKey(models.Model):
         generates a PublicKeyLoginToken instance and returns the login 
         token encrypted
         """
-        server_public_key = self.get_server_key_for_pubkey_type(self.pubkey_type)
+        #server_public_key = self.get_server_key_for_pubkey_type(self.pubkey_type)
         token = PublicKeyLoginToken.generate_token()
         #message = "{} {} {}".format(len(token),token,server_public_key)
         message = token

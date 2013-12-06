@@ -34,8 +34,7 @@ def set_alternative_password(request):
                                         )
             ap_entry.alternative_password = alternative_password
             ap_entry.save()
-            context['alternative_password'] = \
-                       alternative_password.split('$')[-1]
+            context['alternative_password'] = passphrase
     else:
         form = SetAlternativePasswordForm() # An unbound form
     

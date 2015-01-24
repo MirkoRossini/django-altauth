@@ -10,8 +10,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from altauth.models import PublicKey
 from altauth.utils import decrypt_token_rsa
-import re
-import os
 
 
 TEST_RSA_PUBKEY = """-----BEGIN RSA PUBLIC KEY-----
@@ -52,18 +50,18 @@ d9RZu7YNZoqS5p2OUQp+7DlzODApcXMo2TyZzE26zHdiTPGpTqSIR1HvGcQ=
 -----END RSA PRIVATE KEY-----
 """
 
-class AltAuthTest(TestCase):
 
-    def setUp(self): 
+class AltAuthTest(TestCase):
+    def setUp(self):
         self.client = Client()
-        User.objects.create_user(username = 'user', password = 'test')
-        
+        User.objects.create_user(username='user', password='test')
+
         self.rsa_pubkey = TEST_RSA_PUBKEY
         self.rsa_privkey = TEST_RSA_PRIVKEY
 
         # Uncomment to use with your own public/private keys
         # we use ssh format for pubkey to test the "converter"
-        #self.rsa_pubkey = open(os.path.expanduser('~') + '/.ssh/id_rsa.pub').read()
+        # self.rsa_pubkey = open(os.path.expanduser('~') + '/.ssh/id_rsa.pub').read()
         #self.rsa_privkey = open(os.path.expanduser('~') + '/.ssh/id_rsa').read()
 
     def test_alternative_password_creation(self):
@@ -75,37 +73,37 @@ class AltAuthTest(TestCase):
         # Test the set
         self.client.logout()
         response = self.client.get(reverse('altauth_set_alternative_password'))
-        self.assertEqual(response.status_code, 302) # Login is required
-        self.client.login(username = 'user', password = 'test')
+        self.assertEqual(response.status_code, 302)  # Login is required
+        self.client.login(username='user', password='test')
 
         response = self.client.post(reverse('altauth_set_alternative_password'),
-                                    {})
+            {})
         self.assertEqual(response.status_code, 200)
 
         response = self.client.post(reverse('altauth_set_alternative_password'),
-                                    {'passphrase':'alternative password'})
+                                    {'passphrase': 'alternative password'})
         self.assertEqual(response.status_code, 200)
- 
+
         response = self.client.post(reverse('altauth_set_alternative_password'),
-                                    {'passphrase':'alternative password', 'salt':'salt'})
+                                    {'passphrase': 'alternative password', 'salt': 'salt'})
 
         self.assertEqual(response.status_code, 200)
-        
+
         self.client.logout()
-        
+
         # Test if the alternative password login method works
         response = self.client.post(reverse('altauth_alternative_password_login'),
-                                    {'username':'user',
-                                     'alternative_password':'wrong pwd'})
-        self.assertNotIn('_auth_user_id', self.client.session) # not authorized, so not logged in
-        
+                                    {'username': 'user',
+                                     'alternative_password': 'wrong pwd'})
+        self.assertNotIn('_auth_user_id', self.client.session)  # not authorized, so not logged in
+
         response = self.client.post(reverse('altauth_alternative_password_login'),
-                                    {'username':'user',
-                                     'alternative_password':'alternative password'})
-        self.assertEqual(response.status_code, 302) # redirect after login
-        
+                                    {'username': 'user',
+                                     'alternative_password': 'alternative password'})
+        self.assertEqual(response.status_code, 302)  # redirect after login
+
         response = self.client.get(reverse('altauth_set_alternative_password'))
-        self.assertEqual(response.status_code, 200) # As a logged in user I can see the form
+        self.assertEqual(response.status_code, 200)  # As a logged in user I can see the form
 
     def test_rsa_pubkey_login(self):
         """
@@ -116,50 +114,50 @@ class AltAuthTest(TestCase):
         - use token to log in 
         """
         self.client.logout()
-        
+
         # Save the public key
         response = self.client.get(reverse('altauth_set_public_key'))
-        self.assertEqual(response.status_code, 302) # Login is required
-        self.client.login(username = 'user', password = 'test')
+        self.assertEqual(response.status_code, 302)  # Login is required
+        self.client.login(username='user', password='test')
         response = self.client.post(reverse('altauth_set_public_key'),
-            {'public_key' : self.rsa_pubkey,
-             'pubkey_type' : 'RSA' })
+                                    {'public_key': self.rsa_pubkey,
+                                     'pubkey_type': 'RSA'})
 
-        self.assertEqual(response.status_code, 200) 
-        self.assertTrue('successful' in response.content)
+        self.assertEqual(response.status_code, 200)
+        print(response.content)
+        self.assertContains(response, 'successful')
 
-        user = User.objects.get(username = 'user')
+        user = User.objects.get(username='user')
 
         self.assertTrue(PublicKey.objects.get(
-                                      user=user,
-                                      pubkey_type = 'RSA').public_key not in (None, '')
-                       ) 
-        
+            user=user,
+            pubkey_type='RSA').public_key not in (None, '')
+        )
+
         # Generate a login token
         response = self.client.post(
-                      reverse('altauth_get_public_key_token'),
-                      {'username' : 'user',
-                        })
+            reverse('altauth_get_public_key_token'),
+            {'username': 'user',
+            })
         encrypted_message = response.content
         token = decrypt_token_rsa(response.content, self.rsa_privkey)
-        
+
         # Authentication with encrypted token
         response = self.client.post(
-                      reverse('altauth_public_key_login'),
-                      {'username' : 'user',
-                       'token' : token
-                        })
-        
-        #user is logged in
+            reverse('altauth_public_key_login'),
+            {'username': 'user',
+             'token': token
+            })
+
+        # user is logged in
         self.assertIn('_auth_user_id', self.client.session)
-        
+
         self.client.logout()
         # test token is valid only once
         response = self.client.post(
-                      reverse('altauth_public_key_login'),
-                      {'username' : 'user',
-                       'token' : token
-                        })
+            reverse('altauth_public_key_login'),
+            {'username': 'user',
+             'token': token})
 
         #user is not logged in
         self.assertNotIn('_auth_user_id', self.client.session)

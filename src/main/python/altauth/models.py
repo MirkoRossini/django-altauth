@@ -11,13 +11,14 @@ from altauth.utils import get_rsa_public_key_from_ssh_public_key
 
 
 ALLOWED_PUBLICKEY_TYPES = (
-    ('RSA','RSA'),
-  )
+    ('RSA', 'RSA'),
+)
 
 # This token length requires a minimum size of 64 for public keys
 TOKEN_MIN_LENGTH, TOKEN_MAX_LENGTH = (30, 60)
 
-class AlternativePassword(models.Model): 
+
+class AlternativePassword(models.Model):
     """
     Stores an alternative password for the user.
     This is useful for scripting, when users don't want to store 
@@ -25,10 +26,8 @@ class AlternativePassword(models.Model):
     """
     user = models.OneToOneField(User)
     alternative_password = models.CharField(
-                                 _('alternative password'), 
-                                 max_length=128)
-
-
+        _('alternative password'),
+        max_length=128)
 
 
 class PublicKeyLoginToken(models.Model):
@@ -39,7 +38,7 @@ class PublicKeyLoginToken(models.Model):
     token = models.CharField(_('public key'), max_length=TOKEN_MAX_LENGTH)
 
     @staticmethod
-    def generate_token(length = None):
+    def generate_token(length=None):
         """
         Generates a token to be used to log in 
         """
@@ -52,18 +51,19 @@ class PublicKeyLoginToken(models.Model):
         """
         return self.token == token
 
-class PublicKey(models.Model): 
+
+class PublicKey(models.Model):
     """
     Stores a public key for the user for pubkey authentication.
     
     """
     user = models.OneToOneField(User)
     public_key = models.CharField(_('public key'), max_length=500)
-    pubkey_type = models.CharField(_('public key type'), 
-                                   max_length=500, 
-                                   choices = ALLOWED_PUBLICKEY_TYPES)
+    pubkey_type = models.CharField(_('public key type'),
+                                   max_length=500,
+                                   choices=ALLOWED_PUBLICKEY_TYPES)
 
-    def get_server_key_for_pubkey_type(self, key_type = None, public = True):
+    def get_server_key_for_pubkey_type(self, key_type=None, public=True):
         """
         returns the server public/private key 
         for the corresponding key type
@@ -72,9 +72,9 @@ class PublicKey(models.Model):
         key_type = key_type or self.pubkey_type
         if key_type == 'RSA':
             return settings.ALTAUTH_RSA_PUBLIC_KEY if public \
-                    else settings.ALTAUTH_RSA_PRIVATE_KEY
+                else settings.ALTAUTH_RSA_PRIVATE_KEY
         else:
-            raise ValueError(_('pubkey type not supported: %s') % (key_type, ) )
+            raise ValueError(_('pubkey type not supported: %s') % (key_type, ))
 
     def save(self, *args, **kwargs):
         """
@@ -86,8 +86,8 @@ class PublicKey(models.Model):
             # and RSA one.
             if self.public_key.startswith('ssh-rsa '):
                 self.public_key = get_rsa_public_key_from_ssh_public_key(
-                               self.public_key
-                              ).save_pkcs1()
+                    self.public_key
+                ).save_pkcs1()
         super(PublicKey, self).save(*args, **kwargs)
 
     def generate_login_token(self):
@@ -95,22 +95,26 @@ class PublicKey(models.Model):
         generates a PublicKeyLoginToken instance and returns the login 
         token encrypted
         """
-        #server_public_key = self.get_server_key_for_pubkey_type(self.pubkey_type)
         token = PublicKeyLoginToken.generate_token()
-        #message = "{} {} {}".format(len(token),token,server_public_key)
-        message = token
+        message = token if isinstance(token, bytes) else bytes(token, "utf8")
         if self.pubkey_type == 'RSA':
-            public_key = rsa.PublicKey.load_pkcs1(self.public_key)
-            crypto_message = rsa.encrypt(str(message), public_key)
+
+            public_key = self.public_key if isinstance(self.public_key, bytes) else bytes(self.public_key, "utf8")
+            print(public_key)
+            print(isinstance(self.public_key, bytes))
+            public_key = rsa.PublicKey.load_pkcs1(public_key)
+            print( "MESS")
+            print(message)
+            crypto_message = rsa.encrypt(message, public_key)
         else:
             raise ValueError(
-                       _('pubkey type not supported: %s') % (self.public_key, ) 
-                     )
-       
+                _('pubkey type not supported: %s') % (self.public_key, )
+            )
+
         public_key_login_token, created = \
-             PublicKeyLoginToken.objects.get_or_create(
-                public_key = self
-             )
+            PublicKeyLoginToken.objects.get_or_create(
+                public_key=self
+            )
         public_key_login_token.token = token
         public_key_login_token.save()
         return crypto_message

@@ -1,10 +1,9 @@
-from django.conf import settings
 from django.contrib.auth.models import User, check_password
 
 from altauth.models import AlternativePassword, PublicKeyLoginToken
 
 """
-Alternative authentication backends 
+Alternative authentication backends
 
 """
 

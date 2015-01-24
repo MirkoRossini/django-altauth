@@ -21,7 +21,7 @@ TOKEN_MIN_LENGTH, TOKEN_MAX_LENGTH = (30, 60)
 class AlternativePassword(models.Model):
     """
     Stores an alternative password for the user.
-    This is useful for scripting, when users don't want to store 
+    This is useful for scripting, when users don't want to store
     their personal passwords in a script
     """
     user = models.OneToOneField(User)
@@ -40,7 +40,7 @@ class PublicKeyLoginToken(models.Model):
     @staticmethod
     def generate_token(length=None):
         """
-        Generates a token to be used to log in 
+        Generates a token to be used to log in
         """
         length = length or random.randint(TOKEN_MIN_LENGTH, TOKEN_MAX_LENGTH)
         return get_random_string(length)
@@ -55,7 +55,7 @@ class PublicKeyLoginToken(models.Model):
 class PublicKey(models.Model):
     """
     Stores a public key for the user for pubkey authentication.
-    
+
     """
     user = models.OneToOneField(User)
     public_key = models.CharField(_('public key'), max_length=500)
@@ -65,7 +65,7 @@ class PublicKey(models.Model):
 
     def get_server_key_for_pubkey_type(self, key_type=None, public=True):
         """
-        returns the server public/private key 
+        returns the server public/private key
         for the corresponding key type
         ( not used in the current version )
         """
@@ -78,7 +78,7 @@ class PublicKey(models.Model):
 
     def save(self, *args, **kwargs):
         """
-        Overriding save method to cleanup in case of 
+        Overriding save method to cleanup in case of
         ssh public key
         """
         if self.pubkey_type == 'RSA':
@@ -92,7 +92,7 @@ class PublicKey(models.Model):
 
     def generate_login_token(self):
         """
-        generates a PublicKeyLoginToken instance and returns the login 
+        generates a PublicKeyLoginToken instance and returns the login
         token encrypted
         """
         token = PublicKeyLoginToken.generate_token()
@@ -103,7 +103,7 @@ class PublicKey(models.Model):
             print(public_key)
             print(isinstance(self.public_key, bytes))
             public_key = rsa.PublicKey.load_pkcs1(public_key)
-            print( "MESS")
+            print("MESS")
             print(message)
             crypto_message = rsa.encrypt(message, public_key)
         else:
@@ -118,7 +118,3 @@ class PublicKey(models.Model):
         public_key_login_token.token = token
         public_key_login_token.save()
         return crypto_message
-      
-
-
-

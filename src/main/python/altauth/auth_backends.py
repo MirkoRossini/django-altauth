@@ -59,9 +59,7 @@ def pubkey_authenticate(username, token, pubkey_type='RSA'):
                 )
                 token_valid = public_key_login_token.check_token_is_valid(token)
                 public_key_login_token.delete()
-                if not token_valid:
-                    public_key_login_token.delete()
-                else:
+                if token_valid:
                     return user
             except PublicKeyLoginToken.DoesNotExist:
                 pass

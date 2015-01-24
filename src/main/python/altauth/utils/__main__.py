@@ -22,11 +22,11 @@ if __name__ == '__main__':
     if not args.private_key_path :
       raise ValueError(args,'private_key_path is required')
     if args.encrypted_message:
-      token = encrypted_message
+      token = args.encrypted_message
     elif not sys.stdin.isatty():
       token = sys.stdin.read()
     else:
       raise ValueError(args,'encrypted_message (stdin or argument) is required')
-    print decrypt_token_rsa_using_file(token,args.private_key_path),
+    sys.stdout.write(decrypt_token_rsa_using_file(token,args.private_key_path))
  
 

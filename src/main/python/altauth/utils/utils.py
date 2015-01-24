@@ -28,11 +28,8 @@ def get_rsa_public_key_from_ssh_public_key(ssh_public_key):
     ssh_public_key = b64decode(ssh_public_key)
     tlen = hex_string_to_int(ssh_public_key)
     endt = 4 + tlen
-    t = ssh_public_key[4:endt]
-
     elen = hex_string_to_int(ssh_public_key, endt)
     e = hex_string_to_int(ssh_public_key, endt + 4, elen)
-
     nlen = hex_string_to_int(ssh_public_key, endt + 4 + elen)
     n = hex_string_to_int(ssh_public_key, endt + 4 + elen + 4, nlen)
     return rsa.PublicKey(e=e, n=n)
@@ -57,8 +54,3 @@ def decrypt_token_rsa_using_file(encrypted_message, private_key_path):
     view using a key stored in FS
     """
     return decrypt_token_rsa(encrypted_message, open(private_key_path).read())
-
-
-
-
-

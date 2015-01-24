@@ -46,7 +46,7 @@ def set_alternative_password(request):
 
 def alternative_password_login(request):
     """
-    This view can be used to log in with the alternative 
+    This view can be used to log in with the alternative
     password.
     """
     context = {}
@@ -105,11 +105,11 @@ def get_public_key_token(request, pubkey_type='RSA'):
         except PublicKey.DoesNotExist:
             return HttpResponseForbidden(
                 _(('no public key available for '
-                   'pubkey type %(pubkey_type)s')) % \
+                   'pubkey type %(pubkey_type)s')) %
                 {'pubkey_type': pubkey_type}
             )
         except User.DoesNotExist:
-            return HttpResponseForbidden(_("Invalid username: %(username)s") % \
+            return HttpResponseForbidden(_("Invalid username: %(username)s") %
                                          {'username': request.POST['username']})
 
         login_token = public_key.generate_login_token()
@@ -121,7 +121,6 @@ def get_public_key_token(request, pubkey_type='RSA'):
 def public_key_login(request):
     """
     This view can be used to log in with a public key.
-    
     """
     context = {}
     if request.method == 'POST':

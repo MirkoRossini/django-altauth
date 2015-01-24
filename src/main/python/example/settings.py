@@ -154,8 +154,7 @@ LOGGING = {
 
 AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
                            'altauth.auth_backends.AlternativePasswordBackend',
-                           'altauth.auth_backends.PublicKeyBackend',
-)
+                           'altauth.auth_backends.PublicKeyBackend',)
 
 ALTAUTH_RSA_PUBLIC_KEY = """-----BEGIN RSA PUBLIC KEY-----
 MIIBCgKCAQEAgOcQ7euSkdnbf11flsrwrt6ak4Vloz7sflFPLj0cLxXMqAEZ+IhJ
@@ -198,5 +197,4 @@ biZbzZXwdfF11Zdo9mj9fszm8s3xnXDzasreYewDgCQtXWGmqb6c9kZa7O+MLb99
 # Alternatively, you can simply use: open(os.path.expanduser('~') + '.ssh/id_rsa').read()
 
 # ALTAUTH_RSA_PUBLIC_KEY = open(os.path.expanduser('~') + '/.ssh/id_rsa.pub').read()
-#ALTAUTH_RSA_PRIVATE_KEY = open(os.path.expanduser('~') + '/.ssh/id_rsa').read()
-
+# ALTAUTH_RSA_PRIVATE_KEY = open(os.path.expanduser('~') + '/.ssh/id_rsa').read()

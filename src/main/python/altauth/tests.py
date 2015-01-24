@@ -62,7 +62,7 @@ class AltAuthTest(TestCase):
         # Uncomment to use with your own public/private keys
         # we use ssh format for pubkey to test the "converter"
         # self.rsa_pubkey = open(os.path.expanduser('~') + '/.ssh/id_rsa.pub').read()
-        #self.rsa_privkey = open(os.path.expanduser('~') + '/.ssh/id_rsa').read()
+        # self.rsa_privkey = open(os.path.expanduser('~') + '/.ssh/id_rsa').read()
 
     def test_alternative_password_creation(self):
         """
@@ -76,7 +76,8 @@ class AltAuthTest(TestCase):
         self.assertEqual(response.status_code, 302)  # Login is required
         self.client.login(username='user', password='test')
 
-        response = self.client.post(reverse('altauth_set_alternative_password'),
+        response = self.client.post(
+            reverse('altauth_set_alternative_password'),
             {})
         self.assertEqual(response.status_code, 200)
 
@@ -111,7 +112,7 @@ class AltAuthTest(TestCase):
         - set rsa public key
         - generate a login token
         - decrypt the token
-        - use token to log in 
+        - use token to log in
         """
         self.client.logout()
 
@@ -136,18 +137,16 @@ class AltAuthTest(TestCase):
 
         # Generate a login token
         response = self.client.post(
-            reverse('altauth_get_public_key_token'),
-            {'username': 'user',
-            })
-        encrypted_message = response.content
+            reverse(
+                'altauth_get_public_key_token'),
+            {'username': 'user', })
         token = decrypt_token_rsa(response.content, self.rsa_privkey)
 
         # Authentication with encrypted token
         response = self.client.post(
             reverse('altauth_public_key_login'),
             {'username': 'user',
-             'token': token
-            })
+             'token': token})
 
         # user is logged in
         self.assertIn('_auth_user_id', self.client.session)
@@ -159,8 +158,5 @@ class AltAuthTest(TestCase):
             {'username': 'user',
              'token': token})
 
-        #user is not logged in
+        # user is not logged in
         self.assertNotIn('_auth_user_id', self.client.session)
-        
-
-

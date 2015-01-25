@@ -56,6 +56,12 @@ Check out "example/example.sh" for a basic script that shows how to authenticate
 Quick start
 ===========
 
+You can install django_altauth with pip
+
+      pip install django_altauth
+
+To begin using django_altauth:
+
 1. Add "altauth" to your INSTALLED_APPS setting like this::
 
       INSTALLED_APPS = (
@@ -75,6 +81,12 @@ Quick start
                                 'altauth.auth_backends.AlternativePasswordBackend',
                                 'altauth.auth_backends.PublicKeyBackend') 
 
-5. That's all!
+
+5. django_altauth comes with a base.html. Make sure to provide a similar template with a content block, or override
+django_altauth' templates. The default base.html template comes in this form:
+
+     {% block content %}
+     {% endblock %}
+
 
 

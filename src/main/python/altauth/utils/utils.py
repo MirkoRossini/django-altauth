@@ -1,5 +1,6 @@
 import rsa
 from base64 import b64decode
+from altauth.common import b
 
 
 def hex_string_to_int(hexstring, pos=0, length=4, shift=8):
@@ -41,9 +42,9 @@ def decrypt_token_rsa(encrypted_message, private_key):
     view
     """
     private_key = rsa.PrivateKey.load_pkcs1(
-        private_key if isinstance(private_key, bytes) else bytes(private_key, "utf8"))
+        b(private_key))
     token = rsa.decrypt(
-        encrypted_message if isinstance(encrypted_message, bytes) else bytes(encrypted_message, "utf8"),
+        b(encrypted_message),
         private_key)
     return token
 

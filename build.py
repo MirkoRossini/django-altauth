@@ -31,7 +31,7 @@ classifiers = [
     'Topic :: Internet :: WWW/HTTP',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
 ]
-version = "0.3"
+version = "0.4"
 
 
 @init

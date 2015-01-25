@@ -8,7 +8,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.crypto import get_random_string
 
 from altauth.utils import get_rsa_public_key_from_ssh_public_key
-
+from altauth.common import b
 
 ALLOWED_PUBLICKEY_TYPES = (
     ('RSA', 'RSA'),
@@ -96,11 +96,11 @@ class PublicKey(models.Model):
         token encrypted
         """
         token = PublicKeyLoginToken.generate_token()
-        message = token if isinstance(token, bytes) else bytes(token, "utf8")
+        message = b(token)
         if self.pubkey_type == 'RSA':
-
-            public_key = self.public_key if isinstance(self.public_key, bytes) else bytes(self.public_key, "utf8")
-            public_key = rsa.PublicKey.load_pkcs1(public_key)
+            public_key = rsa.PublicKey.load_pkcs1(b(self.public_key))
+            print(public_key)
+            print(message)
             crypto_message = rsa.encrypt(message, public_key)
         else:
             raise ValueError(

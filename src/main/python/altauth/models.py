@@ -99,8 +99,6 @@ class PublicKey(models.Model):
         message = b(token)
         if self.pubkey_type == 'RSA':
             public_key = rsa.PublicKey.load_pkcs1(b(self.public_key))
-            print(public_key)
-            print(message)
             crypto_message = rsa.encrypt(message, public_key)
         else:
             raise ValueError(

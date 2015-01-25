@@ -100,11 +100,7 @@ class PublicKey(models.Model):
         if self.pubkey_type == 'RSA':
 
             public_key = self.public_key if isinstance(self.public_key, bytes) else bytes(self.public_key, "utf8")
-            print(public_key)
-            print(isinstance(self.public_key, bytes))
             public_key = rsa.PublicKey.load_pkcs1(public_key)
-            print("MESS")
-            print(message)
             crypto_message = rsa.encrypt(message, public_key)
         else:
             raise ValueError(

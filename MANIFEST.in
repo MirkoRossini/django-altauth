@@ -1,5 +1,0 @@
-include LICENSE
-include README.rst
-recursive-include altauth/templates *
-recursive-include altauth/utils *
-recursive-include docs *

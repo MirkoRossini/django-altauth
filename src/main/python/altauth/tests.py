@@ -125,7 +125,6 @@ class AltAuthTest(TestCase):
                                      'pubkey_type': 'RSA'})
 
         self.assertEqual(response.status_code, 200)
-        print(response.content)
         self.assertContains(response, 'successful')
 
         user = User.objects.get(username='user')

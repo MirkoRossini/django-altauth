@@ -31,7 +31,7 @@ classifiers = [
     'Topic :: Internet :: WWW/HTTP',
     'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
 ]
-version = "0.2"
+version = "0.3"
 
 
 @init
@@ -63,8 +63,10 @@ def set_properties(project):
                     if package.startswith(os.sep):
                         package = package[1:]
                     package = package.replace(os.sep, ".")
-                    print(package)
                     if package != "example":
                         yield package
 
     project.list_packages = list_packages
+    project.include_file("altauth", "templates/altauth/*")
+    project.include_file("altauth", "templates/base.html")
+
